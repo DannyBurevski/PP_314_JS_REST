@@ -1,4 +1,4 @@
-// Определяем переменные
+// Основные переменные
 const url = "http://localhost:8080/api/users/";
 const usersList = document.querySelector('#allUsersTable tbody');
 const userData = document.querySelector('#userTable tbody');
@@ -9,8 +9,8 @@ const editModalForm = document.querySelector('#editModalForm');
 const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
 const deleteModalForm = document.querySelector('#deleteModalForm');
 
-//-----------------------------------------------------------------------------------------------------
-// Функция вывода юзеров в таблицу
+
+// Функция вывода юзеров
 const showUsers = (users) => {
     users.forEach(user => {
         output += `
@@ -32,12 +32,13 @@ const showUsers = (users) => {
     });
     usersList.innerHTML = output;
 }
-//-----------------------------------------------------------------------------------------------------
+
 // Передача данных из GET запроса в функцию вывода юзеров в таблицу
 fetch(url)
     .then(response => response.json())
     .then(data => showUsers(data))
     .catch(error => console.log(error))
+
 
 // Добавление нового юзера
 addUserForm.addEventListener('submit', (e) => {
@@ -73,6 +74,7 @@ addUserForm.addEventListener('submit', (e) => {
     addNewUserForm[0].reset();
     $('.nav-tabs a[href="#nav-home"]').tab('show');
 })
+
 
 // Функция работы модалок
 const on = (element, event, selector, handler) => {
@@ -161,7 +163,7 @@ deleteModalForm.addEventListener('submit', async (e) => {
     deleteModal.hide()
 })
 
-//-----------------------------------------------------------------------------------------------------
+
 // Функция вывода юзера в таблицу вклакди User
 const showOneUser = (user_admin) => {
     userData.innerHTML = `
