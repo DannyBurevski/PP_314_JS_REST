@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+
+<!-- Верхний бар -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+    <div class="navbar-brand">
+        <span style="font-weight: bold" th:utext="${user_admin.getUsername()}"></span> with roles:
+        <span th:each="role : ${user_admin.getRoles()}">
+                <span th:utext="${role.getName()}">...</span>
+            </span>
+    </div>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+            aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end">
+        <form id="logoutForm" th:action="@{/logout}" method="post">
+            <input type="hidden"/>
+        </form>
+
+        <div class="logout_btn" >
+            <a class="nav-link" style="color: gray" href="/logout">Logout</a>
+        </div>
+    </div>
+
+</nav>
+
+
+<!-- Основной контейнер -->
+
+<div class="container-fluid bg-light vh-100">
+
+    <div class="row">
+
+        <!-- Левая панель Admin User-->
+
+        <div class="col-2 vh-100 bg-white mt-3 p-0 rounded">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
+                   aria-controls="v-pills-home" aria-selected="true">Admin</a>
+                <a sec:authorize="hasAuthority('USER')" class="nav-link" id="v-pills-profile-tab" data-toggle="pill"
+                   href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">User</a>
+            </div>
+        </div>
+
+        <!-- Содержимое вкладки Админ -->
+
+        <div class="col mt-3 ml-2">
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                     aria-labelledby="v-pills-home-tab">
+                    <h1 >Admin panel</h1>
+                    <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <a class="nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home"
+                               role="tab" aria-controls="nav-home" aria-selected="true">Users table</a>
+                            <a class="nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile"
+                               role="tab" aria-controls="nav-profile" aria-selected="false">New User</a>
+                        </div>
+                    </nav>
+
+                    <!-- Вкладки Users table и New User -->
+
+                    <div class="tab-content" id="nav-tabContent">
+
+                        <!-- Контент вкладки Users table -->
+
+                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
+                             aria-labelledby="nav-home-tab">
+
+                            <header class="table-header rounded-top border"
+                                    style="padding-left:20px; padding-top:8px; padding-bottom:6px;
+                                    color: black; font-size: 18px; font-family: Arial">
+                                All users</header>
+
+                            <div class="p-4 bg-white border border-top-0 rounded-bottom">
+                                <table class="table table-striped" id="allUsersTable">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Age</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+
+                                <!-- Модолка Edit-->
+
+                                <div class="modal fade" id="editModal" data-backdrop="static" data-keyboard="false"
+                                     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="staticBackdropLabel">Edit user</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body p-0">
+                                                <div class="bg-white rounded-bottom">
+                                                    <form id="editModalForm">
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="idEdit" class="mb-0 font-weight-bold">
+                                                                    ID</label>
+                                                                <input type="text" class="form-control"
+                                                                       id="idEdit" name="idEdit" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="nameEdit" class="mb-0 font-weight-bold">
+                                                                    First name</label>
+                                                                <input type="text" class="form-control"
+                                                                       id="nameEdit" name="nameEdit">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="lastNameEdit" class="mb-0 font-weight-bold">
+                                                                    Last name</label>
+                                                                <input type="text" class="form-control"
+                                                                       id="lastNameEdit" name="lastNamEdit">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="ageEdit" class="mb-0 font-weight-bold">
+                                                                    Age</label>
+                                                                <input type="number" class="form-control"
+                                                                       id="ageEdit" name="ageEdit">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="emailEdit" class="mb-0 font-weight-bold">
+                                                                    Email</label>
+                                                                <input type="email" class="form-control"
+                                                                       id="emailEdit" name="emailEdit">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="passwordEdit" class="mb-0 font-weight-bold">
+                                                                    Password</label>
+                                                                <input type="password" class="form-control"
+                                                                       id="passwordEdit" name="passwordEdit">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="rolesListEdit" class="mb-0 font-weight-bold">
+                                                                    Role</label>
+                                                                <select multiple class="form-control" id="rolesListEdit"
+                                                                        name="rolesListEdit" size="2" th:name="strRoles">
+                                                                    <option th:each="role : ${rolesList}"
+                                                                            th:text="${role.name}"
+                                                                            th:value="${role.name}">
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                    data-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-primary">Edit</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Модолка Delete -->
+
+                                <div class="modal fade" id="deleteModal" data-backdrop="static" data-keyboard="false"
+                                     tabindex="-1" aria-labelledby="staticBackdropLabelDel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="staticBackdropLabelDel">Edit user</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body p-0">
+                                                <div class="bg-white rounded-bottom">
+                                                    <form id="deleteModalForm">
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="idDelete" class="mb-0 font-weight-bold">
+                                                                    ID</label>
+                                                                <input type="text" class="form-control"
+                                                                       id="idDelete"
+                                                                       name="idDelete" disabled>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="nameDelete" class="mb-0 font-weight-bold">
+                                                                    First name</label>
+                                                                <input type="text" class="form-control"
+                                                                       id="nameDelete"
+                                                                       name="nameDelete" disabled>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="lastNameDelete" class="mb-0 font-weight-bold">
+                                                                    Last name</label>
+                                                                <input type="text" class="form-control"
+                                                                       id="lastNameDelete"
+                                                                       name="lastNameDelete" disabled>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="ageDelete" class="mb-0 font-weight-bold">
+                                                                    Age</label>
+                                                                <input type="number" class="form-control"
+                                                                       id="ageDelete"
+                                                                       name="ageDelete" disabled>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="usernameDelete" class="mb-0 font-weight-bold">
+                                                                    Email</label>
+                                                                <input type="email" class="form-control"
+                                                                       id="usernameDelete"
+                                                                       name="usernameDelete" disabled>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row justify-content-center">
+                                                            <div class="col-6 text-center">
+                                                                <label for="rolesListDelete" class="mb-0 font-weight-bold">
+                                                                    Role</label>
+                                                                <select multiple class="form-control"
+                                                                        id="rolesListDelete"
+                                                                        name="rolesListDelete" size="2"
+                                                                        th:name="strRoles" disabled>
+                                                                    <option th:each="role : ${rolesList}"
+                                                                            th:text="${role.name}"
+                                                                            th:value="${role.name}">
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                    data-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <!-- Вкладка New User-->
+
+                        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                            <header class="table-header rounded-top border"
+                                    style="padding-left:20px; padding-top:8px; padding-bottom:6px;
+                                    color: black; font-size: 18px; font-family: Arial">Add new user</header>
+                            <div class="p-4 bg-white border border-top-0 rounded-bottom" id="newUser">
+                                <form id="addNewUserForm">
+                                    <div class="form-group row justify-content-center">
+                                        <div class="col-4 text-center">
+                                            <label for="addName" class="mb-0 font-weight-bold">First name</label>
+                                            <input type="text" class="form-control" id="addName"
+                                                   placeholder="First name" style=" margin-left:35px; width: 350px">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row justify-content-center">
+                                        <div class="col-4 text-center">
+                                            <label for="addLastName" class="mb-0 font-weight-bold">Last name</label>
+                                            <input type="text" class="form-control" id="addLastName"
+                                                   placeholder="Last name" style=" margin-left:35px; width: 350px">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row justify-content-center">
+                                        <div class="col-4 text-center">
+                                            <label for="addAge" class="mb-0 font-weight-bold">Age</label>
+                                            <input type="number" class="form-control" id="addAge"
+                                                   placeholder="Age" style=" margin-left:35px; width: 350px">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row justify-content-center">
+                                        <div class="col-4 text-center">
+                                            <label for="addUsername" class="mb-0 font-weight-bold">Email</label>
+                                            <input type="email" class="form-control" id="addUsername"
+                                                   placeholder="Email" style=" margin-left:35px; width: 350px">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row justify-content-center">
+                                        <div class="col-4 text-center">
+                                            <label for="addPassword" class="mb-0 font-weight-bold">Password</label>
+                                            <input type="password" class="form-control" id="addPassword"
+                                                   placeholder="Password" style=" margin-left:35px; width: 350px">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row justify-content-center">
+                                        <div class="col-4 text-center">
+                                            <label for="addRoles" class="mb-0 font-weight-bold">Role</label>
+                                            <select multiple class="form-control" id="addRoles" size="2" name="roles"
+                                                    style=" margin-left:35px; width: 350px">
+                                                <option th:each="role : ${rolesList}"
+                                                        th:text="${role.name}"
+                                                        th:value="${role.name}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-2 mt-2">
+                                            <button type="submit" id="addNewUserBtn"
+                                                    class="btn btn-success btn-lg btn-block">Add new user</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Содержимое User ЛЕВОЙ КОЛОНКИ-->
+
+                <div class="tab-pane fade" id="v-pills-profile" role="tabpanel"
+                     aria-labelledby="v-pills-profile-tab">
+                    <h1>User information-page</h1>
+                    <header class="table-header rounded-top border"
+                            style="padding-left:20px; padding-top:8px; padding-bottom:6px;
+                                    color: black; font-size: 18px; font-family: Arial">About user</header>
+                    <div class="p-4 bg-white border border-top-0 rounded-bottom">
+                        <table class="table table-striped" id="userTable">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Age</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script src="jsScript.js"></script>
+</body>
+</html>

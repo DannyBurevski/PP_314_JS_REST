@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" i
+          ntegrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+
+<!-- Верхний бар -->
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+    <div class="navbar-brand">
+        <span style="font-weight: bold" th:utext="${current_user.getUsername()}"></span> with roles:
+        <span th:each="role : ${current_user.getRoles()}">
+                <span th:utext="${role.getName()}">...</span>
+            </span>
+    </div>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+            aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end">
+        <form id="logoutForm" th:action="@{/logout}" method="post">
+            <input type="hidden"/>
+        </form>
+
+        <div class="logout_btn">
+            <a class="nav-link" style="color: gray" href="/logout">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Основной контейнер -->
+<div class="container-fluid bg-light vh-100">
+
+    <div class="row">
+
+        <div class="col-2 vh-100 bg-white mt-3 p-0 rounded">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab"
+                   aria-controls="v-pills-home" aria-selected="true">User</a>
+            </div>
+        </div>
+
+        <div class="col mt-3 ml-2">
+            <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                     aria-labelledby="v-pills-home-tab">
+
+                    <h1>User information-page</h1>
+
+                    <header class="table-header rounded-top border"
+                            style="padding-left:20px; padding-top:8px; padding-bottom:6px;
+                                    color: black; font-size: 18px; font-family: Arial">About user</header>
+                    <div class="p-4 bg-white border border-top-0 rounded-bottom">
+
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Age</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr>
+                                <td th:utext="${current_user.getId()}">...</td>
+                                <td th:utext="${current_user.getName()}">...</td>
+                                <td th:utext="${current_user.getLastName()}">...</td>
+                                <td th:utext="${current_user.getAge()}">...</td>
+                                <td th:utext="${current_user.getUsername()}">...</td>
+                                <td>
+                                    <span th:each="role : ${current_user.getRoles()}">
+                                        <span th:utext="${role.getName()}">...</span>
+                                    </span>
+                                </td>
+                            </tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+</html>
