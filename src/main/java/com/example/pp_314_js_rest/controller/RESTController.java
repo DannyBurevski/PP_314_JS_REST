@@ -34,8 +34,8 @@ public class RESTController {
 
     @GetMapping("/users/user_admin")
     public User showCurrentUser(Principal principal) {
-        User currentUser = userService.findByUsername(principal.getName());
-        return currentUser;
+        User userAdmin = userService.findByUsername(principal.getName());
+        return userAdmin;
     }
 
     @GetMapping("/users/{id}")
