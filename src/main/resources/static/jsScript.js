@@ -1,16 +1,11 @@
-// Основные переменные
+// URL
 const url = "http://localhost:8080/api/users/";
+
+// Функция вывода юзеров
 const usersList = document.querySelector('#allUsersTable tbody');
 const userData = document.querySelector('#userTable tbody');
 let output = '';
-const addUserForm = document.querySelector('#addNewUserForm');
-const editModal = new bootstrap.Modal(document.getElementById('editModal'));
-const editModalForm = document.querySelector('#editModalForm');
-const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-const deleteModalForm = document.querySelector('#deleteModalForm');
 
-
-// Функция вывода юзеров
 const showUsers = (users) => {
     users.forEach(user => {
         output += `
@@ -39,8 +34,11 @@ fetch(url)
     .then(data => showUsers(data))
     .catch(error => console.log(error))
 
+//**************************************************************************************************
 
 // Добавление нового юзера
+const addUserForm = document.querySelector('#addNewUserForm');
+
 addUserForm.addEventListener('submit', (e) => {
     e.preventDefault()
     let addNewUserForm = $('#addNewUserForm')
@@ -58,6 +56,7 @@ addUserForm.addEventListener('submit', (e) => {
         password: password,
         strRoles: roles
     }
+
     fetch(url, {
         method: 'POST',
         headers: {
@@ -71,10 +70,12 @@ addUserForm.addEventListener('submit', (e) => {
             newUser.push(data)
             showUsers(newUser)
         });
+
     addNewUserForm[0].reset();
     $('.nav-tabs a[href="#nav-home"]').tab('show');
 })
 
+//**************************************************************************************************
 
 // Функция работы модалок
 const on = (element, event, selector, handler) => {
@@ -85,7 +86,12 @@ const on = (element, event, selector, handler) => {
     })
 }
 
+//**************************************************************************************************
+
 // Edit - открытие и заполнение модалки
+const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+const editModalForm = document.querySelector('#editModalForm');
+
 let idEditForm = 0
 on(document, 'click', '.btnEdit', e => {
     const rowToEdit = e.target.parentNode.parentNode
@@ -96,6 +102,7 @@ on(document, 'click', '.btnEdit', e => {
     const emailEditForm = rowToEdit.children[4].innerHTML
     const rolesEditForm = rowToEdit.children[5].children[0].innerHTML.trim().split(" ")
     // console.log(rolesEditForm)
+
     $('#idEdit').val(idEditForm);
     $('#nameEdit').val(nameEditForm);
     $('#lastNameEdit').val(lastNameEditForm);
@@ -116,6 +123,7 @@ editModalForm.addEventListener('submit', async (e) => {
         password: $('#passwordEdit').val(),
         strRoles: $('#rolesListEdit').val()
     }
+
     await fetch(url+idEditForm, {
         method: 'PUT',
         headers: {
@@ -123,6 +131,7 @@ editModalForm.addEventListener('submit', async (e) => {
         },
         body: JSON.stringify(editedUser)
     })
+
     let response = await fetch(url+idEditForm);
     let data = await response.json();
     document.getElementById('name' + idEditForm).innerHTML = data.name;
@@ -134,7 +143,12 @@ editModalForm.addEventListener('submit', async (e) => {
     editModal.hide()
 })
 
+//**************************************************************************************************
+
 // Delete - открытие и заполнение модалки
+const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+const deleteModalForm = document.querySelector('#deleteModalForm');
+
 let idDeleteForm = 0
 on(document, 'click', '.btnDelete', e => {
     const rowToDelete = e.target.parentNode.parentNode
@@ -144,6 +158,7 @@ on(document, 'click', '.btnDelete', e => {
     const ageDeleteForm = rowToDelete.children[3].innerHTML
     const usernameDeleteForm = rowToDelete.children[4].innerHTML
     const rolesDeleteForm = rowToDelete.children[5].children[0].innerHTML.trim().split(" ")
+
     $('#idDelete').val(idDeleteForm);
     $('#nameDelete').val(nameDeleteForm);
     $('#lastNameDelete').val(lastNameDeleteForm);
@@ -156,13 +171,16 @@ on(document, 'click', '.btnDelete', e => {
 // Поведение кнопки у модалки Delete
 deleteModalForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    await fetch(url+idDeleteForm, {
+
+    await fetch(url + idDeleteForm, {
         method: 'DELETE'
     })
+
     document.getElementById('row' + idDeleteForm).remove();
     deleteModal.hide()
 })
 
+//**************************************************************************************************
 
 // Функция вывода юзера в таблицу вклакди User
 const showOneUser = (user_admin) => {
